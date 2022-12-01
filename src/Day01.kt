@@ -1,6 +1,6 @@
 fun main() {
-    val input: List<Int> = readInput("Day01_test").foldIndexed(mutableListOf()) { index: Int, acc: MutableList<Int>, line: String ->
-        if (line.isEmpty() || index == 0)
+    val input: List<Int> = readInput("Day01_test").fold(mutableListOf(0)) { acc: MutableList<Int>, line: String ->
+        if (line.isEmpty())
             acc.add(0)
         else
             acc[acc.lastIndex] = acc[acc.lastIndex] + line.toInt()
