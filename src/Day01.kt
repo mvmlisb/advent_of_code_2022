@@ -1,5 +1,5 @@
 fun main() {
-    val input = readInput("Day01_test").foldIndexed(mutableListOf()) { index: Int, acc: MutableList<Int>, line: String ->
+    val input: List<Int> = readInput("Day01_test").foldIndexed(mutableListOf()) { index: Int, acc: MutableList<Int>, line: String ->
         if (line.isEmpty() || index == 0)
             acc.add(0)
         else
