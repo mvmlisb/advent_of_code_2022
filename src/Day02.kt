@@ -20,21 +20,20 @@ private enum class GameMove(private val __Values: List<String>) {
             else -> LOSER_POINTS
         }) + GetPoints()
 
-    fun FightInPredeterminedWay(opponent: GameMove): Int {
-        return (when (this) {
-            Rock -> LOSER_POINTS + when (opponent) {
-                Rock -> Scissors
-                Paper -> Rock
-                Scissors -> Paper
-            }.GetPoints()
+    fun FightInPredeterminedWay(opponent: GameMove) = when (this) {
+        Scissors -> WINNER_POINTS + when (opponent) {
+            Rock -> Paper
+            Paper -> Scissors
+            Scissors -> Rock
+        }.GetPoints()
 
-            Paper -> DRAW_POINTS + opponent.GetPoints()
-            Scissors -> WINNER_POINTS + when (opponent) {
-                Rock -> Paper
-                Paper -> Scissors
-                Scissors -> Rock
-            }.GetPoints()
-        })
+        Rock -> LOSER_POINTS + when (opponent) {
+            Rock -> Scissors
+            Paper -> Rock
+            Scissors -> Paper
+        }.GetPoints()
+
+        Paper -> DRAW_POINTS + opponent.GetPoints()
     }
 
     companion object {
