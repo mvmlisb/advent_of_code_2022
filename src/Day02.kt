@@ -4,9 +4,9 @@ private enum class GameMove(private val __Values: List<String>) {
     Scissors(listOf("C", "Z"));
 
     private fun GetPoints() = when (this) {
-        Rock -> 1 // Rock
-        Paper -> 2 // Paper
-        Scissors -> 3 // Scissors
+        Rock -> 1
+        Paper -> 2
+        Scissors -> 3
     }
 
     fun FightInFairWay(opponent: GameMove) = (if (this == opponent)
