@@ -1,12 +1,45 @@
-private val LINE_NUMBER_WITH_CRATE_STACK_NUMBERS = 8
+data class Instruction constructor(val Count: Int, val From: Int, val To: Int) {
+    companion object {
+        fun FromString(string: String): Instruction {
+            val count = string.substringAfter("move").substringBefore("from").TrimedInt()
+            val from = string.substringAfter("from").substringBefore("to").TrimedInt()
+            val to = string.substringAfter("to").TrimedInt()
+
+            return Instruction(count, from, to)
+        }
+
+        private fun String.TrimedInt() = this.trim().toInt()
+    }
+}
 
 fun main() {
     val input = readInput("Day05_test")
+    val lineIndexWithCrateStackNumbers = input.indexOfFirst { it.matches("^[\\s,1-9]*\$".toRegex()) }
 
-    val stackCrateCount = input[LINE_NUMBER_WITH_CRATE_STACK_NUMBERS].split("   ").size
+    val part1 = ProcessInstructions(
+        input,
+        lineIndexWithCrateStackNumbers,
+        CreateStacks(input, lineIndexWithCrateStackNumbers),
+        false
+    )
+
+    val part2 = ProcessInstructions(
+        input,
+        lineIndexWithCrateStackNumbers,
+        CreateStacks(input, lineIndexWithCrateStackNumbers),
+        true
+    )
+
+    println(part1)
+    println(part2)
+}
+
+
+private fun CreateStacks(input: List<String>, lineIndexWithCrateStackNumbers: Int): List<ArrayDeque<String>> {
+    val stackCrateCount = input[lineIndexWithCrateStackNumbers].split("   ").size
     val stacks = (0 until stackCrateCount).map { ArrayDeque<String>() }
 
-    input.take(LINE_NUMBER_WITH_CRATE_STACK_NUMBERS).forEach { line ->
+    input.take(lineIndexWithCrateStackNumbers).forEach { line ->
         val crates = line.chunked(4).map(String::trim)
         (0 until stackCrateCount).forEach { stackIndex ->
             val crate = crates.getOrNull(stackIndex)
@@ -15,31 +48,41 @@ fun main() {
         }
     }
 
-//    input.drop(LINE_NUMBER_WITH_CRATE_STACK_NUMBERS + 2).forEach { line ->
-//        val count = line.substringAfter("move").substringBefore("from").trim().toInt()
-//        val from = line.substringAfter("from").substringBefore("to").trim().toInt()
-//        val to = line.substringAfter("to").trim().toInt()
-//
-//        repeat(count) {
-//            stacks[to - 1].addFirst(stacks[from - 1].removeFirst())
-//        }
-//    }
+    return stacks
+}
 
-    input.drop(LINE_NUMBER_WITH_CRATE_STACK_NUMBERS + 2).forEach { line ->
-        val count = line.substringAfter("move").substringBefore("from").trim().toInt()
-        val from = line.substringAfter("from").substringBefore("to").trim().toInt()
-        val to = line.substringAfter("to").trim().toInt()
+fun ProcessInstructions(
+    input: List<String>,
+    lineIndexWithCrateStackNumbers: Int,
+    stacks: List<ArrayDeque<String>>,
+    reverseFirstCratesInTargetStackAfterAdd: Boolean
+): String {
+    input.drop(lineIndexWithCrateStackNumbers + 2).forEach { line ->
+        val (count, from, to) = Instruction.FromString(line)
 
-        val tempStack = ArrayDeque<String>()
+        val targetStack = stacks[to - 1]
         repeat(count) {
-            tempStack.addFirst(stacks[from - 1].removeFirst())
+            targetStack.addFirst(stacks[from - 1].removeFirst())
         }
-        tempStack.forEach { stacks[to - 1].addFirst(it) }
+
+        if (reverseFirstCratesInTargetStackAfterAdd)
+            targetStack.ReverseFirst(count)
     }
 
-//    val part1 = stacks.map(ArrayDeque<String>::first).map { it.substring(1..1) }.joinToString("")
-    val part2 = stacks.map(ArrayDeque<String>::first).map { it.substring(1..1) }.joinToString("")
-
-//    println(part1) // WSFTMRHPP
-    println(part2) // GSLCMFBRP
+    return stacks.map(ArrayDeque<String>::first).joinToString("") { it.substring(1..1) }
 }
+
+fun ArrayDeque<String>.ReverseFirst(count: Int) {
+    var startIndex = 0
+    var endIndex = count - 1
+    while (startIndex < endIndex) {
+        val temp = this[startIndex]
+
+        this[startIndex] = this[endIndex]
+        this[endIndex] = temp
+
+        startIndex++
+        endIndex--
+    }
+}
+
