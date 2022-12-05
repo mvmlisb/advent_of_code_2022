@@ -1,4 +1,4 @@
-data class Instruction constructor(val Count: Int, val From: Int, val To: Int) {
+internal data class Instruction constructor(val Count: Int, val From: Int, val To: Int) {
     companion object {
         fun FromString(string: String): Instruction {
             val count = string.substringAfter("move").substringBefore("from").TrimedInt()
@@ -51,7 +51,7 @@ private fun CreateStacks(input: List<String>, lineIndexWithCrateStackNumbers: In
     return stacks
 }
 
-fun ProcessInstructions(
+private fun ProcessInstructions(
     input: List<String>,
     lineIndexWithCrateStackNumbers: Int,
     stacks: List<ArrayDeque<String>>,
@@ -72,7 +72,7 @@ fun ProcessInstructions(
     return stacks.map(ArrayDeque<String>::first).joinToString("") { it.substring(1..1) }
 }
 
-fun ArrayDeque<String>.ReverseFirst(count: Int) {
+private fun ArrayDeque<String>.ReverseFirst(count: Int) {
     var startIndex = 0
     var endIndex = count - 1
     while (startIndex < endIndex) {
