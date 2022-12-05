@@ -1,17 +1,3 @@
-internal data class Instruction internal constructor(val Count: Int, val From: Int, val To: Int) {
-    companion object {
-        fun FromString(string: String): Instruction {
-            val count = string.substringAfter("move").substringBefore("from").TrimedInt()
-            val from = string.substringAfter("from").substringBefore("to").TrimedInt()
-            val to = string.substringAfter("to").TrimedInt()
-
-            return Instruction(count, from, to)
-        }
-
-        private fun String.TrimedInt() = this.trim().toInt()
-    }
-}
-
 fun main() {
     val input = readInput("Day05_test")
     val lineIndexWithCrateStackNumbers = input.indexOfFirst { it.matches("^[\\s,1-9]*\$".toRegex()) }
@@ -58,7 +44,9 @@ private fun ProcessInstructions(
     reverseFirstCratesInTargetStackAfterAdd: Boolean
 ): String {
     input.drop(lineIndexWithCrateStackNumbers + 2).forEach { line ->
-        val (count, from, to) = Instruction.FromString(line)
+        val count = line.substringAfter("move").substringBefore("from").TrimedInt()
+        val from = line.substringAfter("from").substringBefore("to").TrimedInt()
+        val to = line.substringAfter("to").TrimedInt()
 
         val targetStack = stacks[to - 1]
         repeat(count) {
@@ -71,6 +59,8 @@ private fun ProcessInstructions(
 
     return stacks.map(ArrayDeque<String>::first).joinToString("") { it.substring(1..1) }
 }
+
+private fun String.TrimedInt() = this.trim().toInt()
 
 private fun ArrayDeque<String>.ReverseFirst(count: Int) {
     var startIndex = 0
