@@ -1,24 +1,18 @@
-
-private data class Range(val Start: Int,val EndInclusive: Int) {
-    fun OverlapsEachOther(other: Range) = Start in other.Start..other.EndInclusive || other.Start in Start..EndInclusive
-    fun FullyContainsEachOther(other: Range) = Start >= other.Start && EndInclusive <= other.EndInclusive ||
-            other.Start >= Start && other.EndInclusive <= EndInclusive
-    companion object {
-        fun FromString(string: String): Range {
-            val split = string.split("-")
-            return Range(split.first().toInt(), split.last().toInt())
-        }
-    }
+private fun String.ParseIntRange(): IntRange {
+    val split = split("-")
+    return split.first().toInt()..split.last().toInt()
 }
 
-private fun ProcessRanges(process: (Range, Range) -> Boolean) = readInput("Day04_test").map {
-     val split = it.split(",")
-     Range.FromString(split.first()) to Range.FromString(split.last())
- }.fold(0) { acc: Int, (first, second): Pair<Range, Range> -> acc + if( process(first, second)) 1 else 0 }
+private fun ProcessRanges(process: (IntRange, IntRange) -> Boolean) = readInput("Day04_test").map {
+    val split = it.split(",")
+    if (process(split.first().ParseIntRange(), split.last().ParseIntRange())) 1 else 0
+}.sum()
+
+private fun IntRange.FullyContains(other: IntRange) = first >= other.first && last <= other.last
 
 fun main() {
-    val part1 = ProcessRanges(Range::FullyContainsEachOther)
-    val part2 = ProcessRanges(Range::OverlapsEachOther)
+    val part1 = ProcessRanges { first, second -> first.FullyContains(second) || second.FullyContains(first) }
+    val part2 = ProcessRanges { first, second -> first.contains(second.first) || second.contains(first.first) }
 
     println(part1)
     println(part2)

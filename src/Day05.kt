@@ -1,4 +1,4 @@
-internal data class Instruction constructor(val Count: Int, val From: Int, val To: Int) {
+internal data class Instruction internal constructor(val Count: Int, val From: Int, val To: Int) {
     companion object {
         fun FromString(string: String): Instruction {
             val count = string.substringAfter("move").substringBefore("from").TrimedInt()

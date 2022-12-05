@@ -11,8 +11,7 @@ fun main() {
     val input = readInput("Day03_test")
 
     val part1 = input.sumOf {
-        val middle = it.length / 2
-        val commonChar = FindCommonChar(listOf(it.substring(0, middle), it.substring(middle, it.length)))
+        val commonChar = FindCommonChar(it.chunked(it.length / 2))
         Priorities[commonChar.code] ?: 0
     }
 
