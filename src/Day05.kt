@@ -6,7 +6,7 @@ fun main() {
     println(part2)
 }
 
-private fun solve(reverseFirstCratesInTargetStackAfterAdd: Boolean): String {
+private fun solve(reverseFirstCrates: Boolean): String {
     val input = readInput("Day05_test")
     val lineIndexWithCrateStackNumbers = input.indexOfFirst { it.matches("^[\\s,1-9]*\$".toRegex()) }
 
@@ -23,7 +23,7 @@ private fun solve(reverseFirstCratesInTargetStackAfterAdd: Boolean): String {
             targetStack.addFirst(stacks[from - 1].removeFirst())
         }
 
-        if (reverseFirstCratesInTargetStackAfterAdd)
+        if (reverseFirstCrates)
             targetStack.reverseFirst(count)
     }
 
