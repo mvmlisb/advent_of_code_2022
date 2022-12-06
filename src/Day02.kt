@@ -1,15 +1,15 @@
-private enum class GameMove(private val __Values: List<String>) {
+private enum class GameMove(private val values: List<String>) {
     Rock(listOf("A", "X")),
     Paper(listOf("B", "Y")),
     Scissors(listOf("C", "Z"));
 
-    private fun GetPoints() = when (this) {
+    private fun getPoints() = when (this) {
         Rock -> 1
         Paper -> 2
         Scissors -> 3
     }
 
-    fun FightInFairWay(opponent: GameMove) = (if (this == opponent)
+    fun fightInFairWay(opponent: GameMove) = (if (this == opponent)
         DRAW_POINTS
     else
         when {
@@ -18,22 +18,22 @@ private enum class GameMove(private val __Values: List<String>) {
                     this == Paper && opponent == Rock -> WINNER_POINTS
 
             else -> LOSER_POINTS
-        }) + GetPoints()
+        }) + getPoints()
 
-    fun FightInPredeterminedWay(opponent: GameMove) = when (this) {
+    fun fightInPredeterminedWay(opponent: GameMove) = when (this) {
         Scissors -> WINNER_POINTS + when (opponent) {
             Rock -> Paper
             Paper -> Scissors
             Scissors -> Rock
-        }.GetPoints()
+        }.getPoints()
 
         Rock -> LOSER_POINTS + when (opponent) {
             Rock -> Scissors
             Paper -> Rock
             Scissors -> Paper
-        }.GetPoints()
+        }.getPoints()
 
-        Paper -> DRAW_POINTS + opponent.GetPoints()
+        Paper -> DRAW_POINTS + opponent.getPoints()
     }
 
     companion object {
@@ -41,19 +41,18 @@ private enum class GameMove(private val __Values: List<String>) {
         private const val LOSER_POINTS = 0
         private const val DRAW_POINTS = 3
 
-        fun FromString(string: String) = values().first { it.__Values.contains(string) }
+        fun fromString(string: String) = values().first { it.values.contains(string) }
     }
 }
 
-private fun CalculateTotalScore(fight: (you: GameMove, opponent: GameMove) -> Int): Int {
-    return readInput("Day02_test").fold(0) { acc: Int, line: String ->
-        acc + fight(GameMove.FromString(line.substringAfter(" ")), GameMove.FromString(line.substringBefore(" ")))
+private fun score(fight: (you: GameMove, opponent: GameMove) -> Int) =
+    readInput("Day02_test").fold(0) { acc: Int, line: String ->
+        acc + fight(GameMove.fromString(line.substringAfter(" ")), GameMove.fromString(line.substringBefore(" ")))
     }
-}
 
 fun main() {
-    val part1 = CalculateTotalScore { you, opponent -> you.FightInFairWay(opponent) }
+    val part1 = score { you, opponent -> you.fightInFairWay(opponent) }
     println(part1)
-    val part2 = CalculateTotalScore { you, opponent -> you.FightInPredeterminedWay(opponent) }
+    val part2 = score { you, opponent -> you.fightInPredeterminedWay(opponent) }
     println(part2)
 }

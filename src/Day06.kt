@@ -1,23 +1,23 @@
 import kotlin.math.min
 
-private fun FindStartOfPacketMarker(string: String, startOfPacketMarkerLength: Int): Int {
+private fun solve(string: String, packetMarkerLength: Int): Int {
     string.forEachIndexed { startIndex, _ ->
-        val endIndex = min(startIndex + startOfPacketMarkerLength, string.length)
+        val endIndex = min(startIndex + packetMarkerLength, string.length)
 
-        if (string.substring(startIndex, endIndex).AllUnique())
+        if (string.substring(startIndex, endIndex).allUnique())
             return endIndex
     }
     return -1
 }
 
-private fun String.AllUnique() = all(hashSetOf<Char>()::add)
+private fun String.allUnique() = all(hashSetOf<Char>()::add)
 
 
 fun main() {
     val input = readInput("Day06_test")
 
-    val part1 = FindStartOfPacketMarker(input.first(), 4)
-    val part2 = FindStartOfPacketMarker(input.first(), 14)
+    val part1 = solve(input.first(), 4)
+    val part2 = solve(input.first(), 14)
 
     println(part1)
     println(part2)

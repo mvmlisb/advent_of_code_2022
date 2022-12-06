@@ -1,21 +1,22 @@
 fun main() {
-    val part1 = Solve(false)
-    val part2 = Solve(true)
+    val part1 = solve(false)
+    val part2 = solve(true)
 
     println(part1)
     println(part2)
 }
 
-private fun Solve(reverseFirstCratesInTargetStackAfterAdd: Boolean): String {
+private fun solve(reverseFirstCratesInTargetStackAfterAdd: Boolean): String {
     val input = readInput("Day05_test")
     val lineIndexWithCrateStackNumbers = input.indexOfFirst { it.matches("^[\\s,1-9]*\$".toRegex()) }
 
-    val stacks = CreateStacks(input, lineIndexWithCrateStackNumbers)
+    val stacks = createStacks(input, lineIndexWithCrateStackNumbers)
 
     input.drop(lineIndexWithCrateStackNumbers + 2).forEach { line ->
-        val count = line.substringAfter("move").substringBefore("from").TrimedInt()
-        val from = line.substringAfter("from").substringBefore("to").TrimedInt()
-        val to = line.substringAfter("to").TrimedInt()
+        val split = line.split(" ")
+        val count = split[1].toInt()
+        val from = split[3].toInt()
+        val to = split[5].toInt()
 
         val targetStack = stacks[to - 1]
         repeat(count) {
@@ -23,13 +24,13 @@ private fun Solve(reverseFirstCratesInTargetStackAfterAdd: Boolean): String {
         }
 
         if (reverseFirstCratesInTargetStackAfterAdd)
-            targetStack.ReverseFirst(count)
+            targetStack.reverseFirst(count)
     }
 
     return stacks.joinToString("") { it.first().trim('[', ']') }
 }
 
-private fun CreateStacks(input: List<String>, lineIndexWithCrateStackNumbers: Int): List<ArrayDeque<String>> {
+private fun createStacks(input: List<String>, lineIndexWithCrateStackNumbers: Int): List<ArrayDeque<String>> {
     val stackCrateCount = input[lineIndexWithCrateStackNumbers].split("   ").size
     val stacks = (0 until stackCrateCount).map { ArrayDeque<String>() }
 
@@ -45,9 +46,7 @@ private fun CreateStacks(input: List<String>, lineIndexWithCrateStackNumbers: In
     return stacks
 }
 
-private fun String.TrimedInt() = trim().toInt()
-
-private fun ArrayDeque<String>.ReverseFirst(count: Int) {
+private fun ArrayDeque<String>.reverseFirst(count: Int) {
     var startIndex = 0
     while (startIndex < count / 2) {
         val temp = this[startIndex]
