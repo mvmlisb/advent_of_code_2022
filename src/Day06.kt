@@ -1,10 +1,10 @@
 import kotlin.math.min
 
 private fun solve(string: String, packetMarkerLength: Int): Int {
-    string.forEachIndexed { startIndex, _ ->
-        val endIndex = min(startIndex + packetMarkerLength, string.length)
+    string.indices.forEach { index ->
+        val endIndex = min(index + packetMarkerLength, string.length)
 
-        if (string.substring(startIndex, endIndex).allUnique())
+        if (string.substring(index, endIndex).allUnique())
             return endIndex
     }
     return -1
