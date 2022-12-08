@@ -1,4 +1,4 @@
-private fun processInnerRow(rows: List<List<Int>>, process: (rowIndex: Int, row: List<Int>, indexInRow: Int) -> Unit) {
+private inline fun processInnerRow(rows: List<List<Int>>, process: (rowIndex: Int, row: List<Int>, indexInRow: Int) -> Unit) {
     rows.forEachIndexed { rowIndex, row ->
         val isOuterRowIndex = rowIndex == 0 || rowIndex == rows.lastIndex
         if (!isOuterRowIndex)
