@@ -17,11 +17,9 @@ private data class Directory(val parent: Directory?, val name: String) {
 
     fun getDirectories(): List<Directory> = directories
 
-    fun collect(predicate: (Directory) -> Boolean): Sequence<Directory> = sequence {
-        if (predicate(this@Directory))
-            yield(this@Directory)
-
-        yieldAll(directories.flatMap { it.collect(predicate) }.asSequence())
+    fun collect(): Sequence<Directory> = sequence {
+        yield(this@Directory)
+        yieldAll(directories.flatMap { it.collect() }.asSequence())
     }
 
     fun fillFromLsResult(string: String) {
@@ -37,11 +35,13 @@ fun main() {
     val rootDirectory = createRootDirectory()
 
     val part1 = rootDirectory
-        .collect { it.getSize() < 100000 }
+        .collect()
+        .filter { it.getSize() < 100000 }
         .sumOf { it.getSize() }
 
     val part2 = rootDirectory
-        .collect { it.getSize() > kotlin.math.abs(70000000 - rootDirectory.getSize() - 30000000) }
+        .collect()
+        .filter { it.getSize() > 30000000 - (70000000 - rootDirectory.getSize()) }
         .sortedBy { it.getSize() }
         .first()
         .getSize()
