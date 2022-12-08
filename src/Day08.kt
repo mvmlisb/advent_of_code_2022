@@ -34,6 +34,7 @@ private inline fun <T> processLeftRight(
 
 private fun List<Int>.incrementUntilReceiveEqualOrGreaterNumber(numberInclusive: Int): Int {
     var count = 0
+
     for (number in this) {
         count += 1
         if (number >= numberInclusive)
