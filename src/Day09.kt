@@ -1,8 +1,8 @@
-private data class Coords(var x: Int, var y: Int)
+data class Coords(var x: Int, var y: Int)
 
 class Rope {
-    private var head = Coords(0, 0)
-    private var tail = Coords(0, 0)
+    var head = Coords(0, 0)
+    var tail = Coords(0, 0)
 
     fun move(string: String, field: MutableList<MutableList<Int>>) {
         val split = string.split(" ")
@@ -10,72 +10,72 @@ class Rope {
         val step = split.last().toInt()
 
         val prevHead = head.copy()
-        val prevTail = head.copy()
+        val prevTail = tail.copy()
 
-        when(direction) {
+        when (direction) {
             "U" -> {
                 head.y += step
-                tail.y = head.y - 1
-                if (head.x != tail.x)
+                if (head.x != tail.x && step > 1) {
+                    tail.y = head.y - 1
                     tail.x = head.x
+                    markYRange(field, tail.x, (prevTail.y + 1..tail.y))
+                } else
+                    markYRange(field, tail.x, (prevTail.y..tail.y))
             }
+
             "D" -> {
                 head.y -= step
-                tail.y = head.y + 1
-                if (head.x != tail.x)
+                if (head.x != tail.x && step > 1) {
+                    tail.y = head.y + 1
+
                     tail.x = head.x
+                    markYRange(field, tail.x, (tail.y..prevTail.y - 1))
+                } else
+                    markYRange(field, tail.x, (tail.y..prevTail.y))
             }
 
             "R" -> {
                 head.x += step
-                tail.x = head.x - 1
-                if (head.y != tail.y)
+                if (head.y != tail.y && step > 1) {
+                    tail.x = head.x - 1
+
                     tail.y = head.y
+                    markXRange(field, tail.y, prevTail.x + 1..tail.x)
+                }else
+                    markXRange(field, tail.y, prevTail.x..tail.x)
             }
+
             "L" -> {
                 head.x -= step
-                tail.x = head.x + 1
-                if (head.y != tail.y)
+                if (head.y != tail.y && step > 1) {
+                    tail.x = head.x + 1
+
                     tail.y = head.y
+                    markXRange(field, tail.y, tail.x..prevTail.x - 1)
+                } else
+                    markXRange(field, tail.y, tail.x..prevTail.x)
             }
         }
-
-        fillField(field, prevHead, prevTail)
     }
 
-   private fun fillField(field: MutableList<MutableList<Int>>,  prevHead: Coords,  prevTail: Coords) {
-       val yRange = if (prevTail.y < tail.y)
-           prevTail.y..tail.y
-       else
-           prevTail.y downTo tail.y
-
-       val xRange = if (prevTail.x < tail.x)
-           prevTail.x..tail.x
-       else
-           prevTail.x downTo tail.x
-
-       yRange.forEachIndexed { indexY,  y ->
-           xRange.forEachIndexed { indexX, x ->
-               if ((prevTail.x != tail.x && indexX == 0) || (prevTail.y != tail.y && indexY == 0)){
-
-               } else
-                   field[y][x]++
-           }
-       }
+    private fun markYRange(field: MutableList<MutableList<Int>>, x: Int, yRange: IntProgression) {
+        yRange.forEach {
+            field[it][x]++
+        }
     }
 
-
+    private fun markXRange(field: MutableList<MutableList<Int>>, y: Int, xRange: IntProgression) {
+        xRange.forEach {
+            field[y][it]++
+        }
+    }
     override fun toString() = "Head : $head || Tail : $tail"
 }
 
 fun main() {
     val input = readInput("Day09_test")
 
-    val field = buildList {
-        repeat(5) {
-            add(MutableList(6) { 0})
-        }
-    }.reversed().toMutableList()
+    val field = MutableList(5) { MutableList(6) { 0 } }
 
     val rope = Rope()
 
@@ -83,5 +83,7 @@ fun main() {
         rope.move(it, field)
     }
 
-    println(field.joinToString("\n"))
+    println(rope.toString())
+    println(field.reversed().joinToString("\n"))
+    println(field.reversed().map { it.filter { it > 0 } }.sumOf { it.size })
 }
