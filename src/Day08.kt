@@ -16,7 +16,7 @@ private inline fun <T> processUpDown(
     process: (up: List<Int>, bottom: List<Int>, number: Int) -> T
 ): T {
     val number = rows[rowIndex][indexInRow]
-    val up = (0 until rowIndex).map { rows[it][indexInRow] }
+    val up = (0 until rowIndex).map { rows[it][indexInRow] }.reversed()
     val bottom = (rowIndex + 1 until rows.size).map { rows[it][indexInRow] }
     return process(up, bottom, number)
 }
@@ -27,7 +27,7 @@ private inline fun <T> processLeftRight(
     process: (left: List<Int>, right: List<Int>, number: Int) -> T
 ): T {
     val number = row[indexInRow]
-    val left = row.subList(0, indexInRow)
+    val left = row.subList(0, indexInRow).reversed()
     val right = row.subList(indexInRow + 1, row.size)
     return process(left, right, number)
 }
@@ -68,15 +68,9 @@ private fun part1(rows: List<List<Int>>): Int {
 private fun part2(rows: List<List<Int>>) = buildSet {
     processInnerRow(rows) { rowIndex, row, indexInRow ->
         add(processUpDown(rowIndex, indexInRow, rows) { up, bottom, number ->
-            up.reversed()
-                .incrementUntilReceiveEqualOrGreaterNumber(number) * bottom.incrementUntilReceiveEqualOrGreaterNumber(
-                number
-            )
+            up.incrementUntilReceiveEqualOrGreaterNumber(number) * bottom.incrementUntilReceiveEqualOrGreaterNumber(number)
         } * processLeftRight(indexInRow, row) { left, right, number ->
-            left.reversed()
-                .incrementUntilReceiveEqualOrGreaterNumber(number) * right.incrementUntilReceiveEqualOrGreaterNumber(
-                number
-            )
+            left.incrementUntilReceiveEqualOrGreaterNumber(number) * right.incrementUntilReceiveEqualOrGreaterNumber(number)
         })
     }
 }.max()
