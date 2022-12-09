@@ -1,13 +1,8 @@
-data class Coords(var x: Int, var y: Int)
-
+private data class Coords(var x: Int, var y: Int)
 
 class Rope {
     private var head = Coords(0, 0)
     private var tail = Coords(0, 0)
-
-    var _visitedPositionsByTail = setOf<Coords>()
-        private set
-
 
     fun move(string: String, field: MutableList<MutableList<Int>>) {
         val split = string.split(" ")
@@ -21,39 +16,52 @@ class Rope {
             "U" -> {
                 head.y += step
                 tail.y = head.y - 1
-                if (head.x != tail.x) {
+                if (head.x != tail.x)
                     tail.x = head.x
-                }
             }
             "D" -> {
                 head.y -= step
                 tail.y = head.y + 1
-                if (head.x != tail.x) {
+                if (head.x != tail.x)
                     tail.x = head.x
-                }
             }
+
             "R" -> {
                 head.x += step
                 tail.x = head.x - 1
-                if (head.y != tail.y) {
+                if (head.y != tail.y)
                     tail.y = head.y
-                }
             }
             "L" -> {
                 head.x -= step
                 tail.x = head.x + 1
-                if (head.y != tail.y) {
+                if (head.y != tail.y)
                     tail.y = head.y
-                }
             }
         }
 
-        val reversed = field.reversed()
-        (prevTail.y..tail.y).forEach { lineIndex ->
-            (prevTail.x..tail.x).forEach { indexInLine ->
-                reversed[lineIndex][indexInLine] = reversed[lineIndex][indexInLine] + 1
-            }
-        }
+        fillField(field, prevHead, prevTail)
+    }
+
+   private fun fillField(field: MutableList<MutableList<Int>>,  prevHead: Coords,  prevTail: Coords) {
+       val yRange = if (prevTail.y < tail.y)
+           prevTail.y..tail.y
+       else
+           prevTail.y downTo tail.y
+
+       val xRange = if (prevTail.x < tail.x)
+           prevTail.x..tail.x
+       else
+           prevTail.x downTo tail.x
+
+       yRange.forEachIndexed { indexY,  y ->
+           xRange.forEachIndexed { indexX, x ->
+               if ((prevTail.x != tail.x && indexX == 0) || (prevTail.y != tail.y && indexY == 0)){
+
+               } else
+                   field[y][x]++
+           }
+       }
     }
 
 
@@ -67,7 +75,7 @@ fun main() {
         repeat(5) {
             add(MutableList(6) { 0})
         }
-    }.toMutableList()
+    }.reversed().toMutableList()
 
     val rope = Rope()
 
