@@ -15,45 +15,37 @@ class Rope {
         when (direction) {
             "U" -> {
                 head.y += step
+                tail.y = head.y - 1
                 if (head.x != tail.x && step > 1) {
-                    tail.y = head.y - 1
                     tail.x = head.x
-                    markYRange(field, tail.x, (prevTail.y + 1..tail.y))
-                } else
-                    markYRange(field, tail.x, (prevTail.y..tail.y))
+                }
+                markYRange(field, tail.x, prevHead.y + 1 until head.y)
             }
 
             "D" -> {
                 head.y -= step
+                tail.y = head.y + 1
                 if (head.x != tail.x && step > 1) {
-                    tail.y = head.y + 1
-
                     tail.x = head.x
-                    markYRange(field, tail.x, (tail.y..prevTail.y - 1))
-                } else
-                    markYRange(field, tail.x, (tail.y..prevTail.y))
+                }
             }
 
             "R" -> {
                 head.x += step
+                tail.x = head.x - 1
                 if (head.y != tail.y && step > 1) {
-                    tail.x = head.x - 1
-
                     tail.y = head.y
-                    markXRange(field, tail.y, prevTail.x + 1..tail.x)
-                }else
-                    markXRange(field, tail.y, prevTail.x..tail.x)
+                }
+                markXRange(field, tail.y, prevHead.x until head.x)
             }
 
             "L" -> {
                 head.x -= step
+                tail.x = head.x + 1
                 if (head.y != tail.y && step > 1) {
-                    tail.x = head.x + 1
-
                     tail.y = head.y
-                    markXRange(field, tail.y, tail.x..prevTail.x - 1)
-                } else
-                    markXRange(field, tail.y, tail.x..prevTail.x)
+                }
+                markXRange(field, tail.y, prevHead.x - 1 downTo head.x + 1)
             }
         }
     }
