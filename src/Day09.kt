@@ -1,84 +1,76 @@
-data class Coords(var x: Int, var y: Int)
+private data class Coords(var x: Int, var y: Int)
 
-class Rope(private val field: Array<Array<Int>>) {
+private class Rope {
     private var head = Coords(0, 0)
     private var tail = Coords(0, 0)
+
+    val visitedCordsByTail = mutableSetOf<Coords>()
+
+    init {
+        visitedCordsByTail += tail.copy()
+    }
 
     fun move(string: String) {
         val split = string.split(" ")
         val direction = split.first()
-        val step = split.last().toInt()
-
-        val prevTail = tail.copy()
+        val count = split.last().toInt()
 
         when (direction) {
             "U" -> {
-                head.y += step
-                tail.y = head.y - 1
-                if (head.x != tail.x) {
-                    tail.x = head.x
-                    markYRange(tail.x, prevTail.y + 1..tail.y)
-                } else
-                    markYRange(tail.x, prevTail.y..tail.y)
-            }
+                repeat(count) {
+                    head.y ++
+                    if (head.y - tail.y > 1) {
+                        tail.x = head.x
+                        tail.y++
+                        visitedCordsByTail += tail.copy()
+                    }
 
+                }
+            }
             "D" -> {
-                head.y -= step
-                tail.y = head.y + 1
-                if (head.x != tail.x) {
-                    tail.x = head.x
-                    markYRange(tail.x, prevTail.y downTo tail.y)
-                } else
-                    markYRange(tail.x, prevTail.y downTo tail.y)
-            }
+                repeat(count) {
+                    head.y--
+                    if (tail.y - head.y > 1) {
+                        tail.x = head.x
+                        tail.y--
+                        visitedCordsByTail += tail.copy()
 
+                    }
+                }
+            }
             "R" -> {
-                head.x += step
-                tail.x = head.x - 1
-                if (head.y != tail.y) {
-                    tail.y = head.y
-                    markXRange(tail.y, prevTail.x + 1..tail.x)
-                } else
-                    markXRange(tail.y, prevTail.x..tail.x)
-            }
+                repeat(count) {
+                    head.x++
+                    if (head.x - tail.x > 1) {
+                        tail.y = head.y
+                        tail.x++
+                        visitedCordsByTail += tail.copy()
 
+                    }
+                }
+
+            }
             "L" -> {
-                head.x -= step
-                tail.x = head.x + 1
-                if (head.y != tail.y) {
-                    tail.y = head.y
-                    markXRange(tail.y, prevTail.x downTo tail.x)
-                } else
-                    markXRange(tail.y, prevTail.x downTo tail.x)
+                repeat(count) {
+                    head.x--
+                    if (tail.x - head.x > 1) {
+                        tail.y = head.y
+                        tail.x--
+                        visitedCordsByTail += tail.copy()
+                    }
+                }
             }
         }
+
     }
 
-    private fun markYRange(x: Int, yRange: IntProgression) {
-        yRange.forEach {
-            field[it][x]++
-        }
-    }
-
-    private fun markXRange(y: Int, xRange: IntProgression) {
-        xRange.forEach {
-            field[y][it]++
-        }
-    }
-
-    override fun toString() = "Head : $head || Tail : $tail"
+    override fun toString() = "Head : $head :::: Tail : $tail"
 }
 
 fun main() {
     val input = readInput("Day09_test")
-
-    val field = Array(5) { Array(6) { 0 } }
-
-    val rope = Rope(field)
-
+    val rope = Rope()
     input.forEach(rope::move)
-
+    println(rope.visitedCordsByTail.size)
     println(rope.toString())
-    println(field.reversed().joinToString("\n") { it.joinToString { it.toString() } })
-    println(field.reversed().map { it.filter { it > 0 } }.sumOf { it.size })
 }
